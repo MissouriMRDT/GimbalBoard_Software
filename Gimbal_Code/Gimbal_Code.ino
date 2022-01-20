@@ -1,11 +1,8 @@
-#include <Energia.h>
-#include <Servo.h>
-#include "RoveComm.h"
-#include "Gimble_Code.h"
+#include "Gimbal_Code.h"
 
 Servo servos[8];
 
-int16_t servoPosition[8]; 
+int16_t servoPosition[8];
 //uint16_t servoOrigin[8];
 uint16_t servoMax[8];
 uint16_t servoMin[8];
@@ -108,7 +105,7 @@ void loop()
         break;
       }
 
-      case RC_GIMBALBOARD_LEFTDRIVEGIMBALABSOLUTE_DATA_ID:
+      /*case RC_GIMBALBOARD_LEFTDRIVEGIMBALABSOLUTE_DATA_ID:
       {
         Serial.println("Left Drive Incremental:");
         dataOutput();
@@ -138,7 +135,7 @@ void loop()
         dataOutput();
         gimbalAbsolute(6, 8);
         break;
-      }
+      }*/
 
       case RC_GIMBALBOARD_INITIATETESTROUTINE_DATA_ID:
       {

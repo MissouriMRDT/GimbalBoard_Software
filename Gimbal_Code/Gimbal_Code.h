@@ -1,21 +1,20 @@
-#ifndef Gimble_Code_h
-#define Gimble_Code_h
+#ifndef Gimbal_Code_h
+#define Gimbal_Code_h
 
-#include <Energia.h>
 #include <Servo.h>
-#include "RoveComm.h"
+#include "TeensyRoveComm.h"
 
 //Constants
 
   //Pins
-#define SERVO1 PF_1
-#define SERVO2 PF_2
-#define SERVO3 PF_3
-#define SERVO4 PG_0
-#define SERVO5 PG_1
-#define SERVO6 PK_4
-#define SERVO7 PK_5
-#define SERVO8 PM_0
+#define SERVO1 1
+#define SERVO2 2
+#define SERVO3 3
+#define SERVO4 4
+#define SERVO5 5
+#define SERVO6 6
+#define SERVO7 7
+#define SERVO8 8
 
   //Starting
 #define SERVO1_START 135
