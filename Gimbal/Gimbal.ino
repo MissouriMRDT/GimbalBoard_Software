@@ -31,7 +31,7 @@ void loop()
       Serial.println("Incremental: ");
       Serial.println(position[0]);
       Serial.println(position[1]);
-      scoop.write(position);
+      scoop.write(position[0]);
       break;
     default:
       break;
