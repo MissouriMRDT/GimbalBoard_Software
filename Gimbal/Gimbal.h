@@ -1,17 +1,19 @@
 #ifndef GIMBAL_H
 #define GIMBAL_H
 
-#include "RoveComm.h"
+#include <RoveComm.h>
+#include <RoveCommManifest.h>
+#include <RoveCommPacket.h>
 #include <Servo.h>
 
 #define LMP_SERVO 1
 #define LMT_SERVO 2
-#define RMP_SERVO 3
-#define RMT_SERVO 4
-#define LD_SERVO 5
-#define SPARE1 6
+#define RMP_SERVO 5
+#define RMT_SERVO 6
+#define LD_SERVO 8
+#define SPARE1 3
 #define RD_SERVO 7
-#define SPARE2 8
+#define SPARE2 4
 
 Servo leftMainPan;
 Servo leftMainTilt;

@@ -10,7 +10,7 @@ void setup()
   Serial.begin(115000);
 
   delay(ROVECOMM_DELAY);
-  RoveComm.begin(RC_GIMBALBOARD_FOURTHOCTET, &TCPServer);
+  RoveComm.begin(RC_GIMBALBOARD_FOURTHOCTET, &TCPServer, RC_ROVECOMM_GIMBALBOARD_MAC);
   delay(ROVECOMM_DELAY);
 
   leftMainPan.attach(LMP_SERVO);
