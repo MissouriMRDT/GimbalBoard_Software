@@ -111,7 +111,7 @@ void gimbalIncrement(const int &servoNum1, const int &servoNum2)
 
     for (int i = servoNum1; i < servoNum2; i++)
     {
-        if (incrementValues[i - servoNum1] > abs(IGNORE_THRESHOLD))
+        if (abs(incrementValues[i - servoNum1]) > IGNORE_THRESHOLD)
         {
             servoPosition[i] += incrementValues[i - servoNum1];
 
