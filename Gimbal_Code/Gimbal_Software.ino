@@ -2,6 +2,11 @@
 
 void setup()
 {
+    Serial.begin(9600);
+
+    RoveComm.begin(RC_GIMBALBOARD_FOURTHOCTET, &TCPServer, RC_ROVECOMM_GIMBALBOARD_MAC);
+    delay(ROVECOMM_DELAY);
+
     //Attach Servo Array to Respective Pins
     servos[0].attach(R_Drive_Servo);
     servos[1].attach(R_Pan_Servo);
