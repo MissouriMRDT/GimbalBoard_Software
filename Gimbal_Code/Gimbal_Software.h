@@ -22,6 +22,7 @@ Servo Servos[NUM_SERVOS];
 #define SERVO4_START 135
 #define SERVO5_START 135
 #define SERVO6_START 135
+#define SERVO7_START 135
 
 //Minimum and Maximum Servo Values
 #define R_DRIVE_SERVO_MIN 0
