@@ -17,13 +17,13 @@ void setup()
     servos[6].attach(EXTRA_SERVO);
 
     //Servo Postions Set to Starting Positons
-    servoStart[0] = SERVO1_START;
-    servoStart[1] = SERVO2_START;
-    servoStart[2] = SERVO3_START;
-    servoStart[3] = SERVO4_START;
-    servoStart[4] = SERVO5_START;
-    servoStart[5] = SERVO6_START;
-    servoStart[6] = SERVO7_START;
+    servoPosition[0] = SERVO1_START;
+    servoPosition[1] = SERVO2_START;
+    servoPosition[2] = SERVO3_START;
+    servoPosition[3] = SERVO4_START;
+    servoPosition[4] = SERVO5_START;
+    servoPosition[5] = SERVO6_START;
+    servoPosition[6] = SERVO7_START;
 
     //Servo Max Values in Array
     servoMax[0] = R_DRIVE_SERVO_MAX;
@@ -95,3 +95,25 @@ void dataOutput()
         Serial.println(packet.data[i]);
     }
 }
+
+void gimbalIncrement(const int &servoNum1, const int &servoNum2)
+{
+    int16_t *incrementValues = (int16_t *)packet.data;
+
+    for(int i = 0; i < 2; i++)
+    {
+        if (abs(incrementValues[servoNum1]) > IGNORE_THRESHOLD)
+        {
+            servoPosition[] += incrementValues[servoNum1];
+
+            if (servoPosition[] > servoMax[])
+            {
+                servoPosition[] = servoMax[];
+            }
+            else if (servoPosition[] < servoMin[])
+            {
+                servoPosition [] = servoMin[];
+            }
+        }
+    }
+}    
