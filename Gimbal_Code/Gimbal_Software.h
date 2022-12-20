@@ -12,8 +12,10 @@
 #define L_TILT_SERVO 6
 #define EXTRA_SERVO 33
 
-#define NUM_SERVOS 7
-Servo Servos[NUM_SERVOS];
+Servo servos[7];
+int16_t servoPosition[8];
+uint16_t servoMax[8];
+uint16_t servoMin[8];
 
 //Starting Postions
 #define SERVO1_START 135

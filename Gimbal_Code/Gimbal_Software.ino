@@ -1,4 +1,9 @@
-#include Gimbal_Code_h
+#include "Gimbal.h"
+
+EthernetServer TCPServer(RC_ROVECOMM_GIMBALBOARD_PORT);
+RoveCommEthernet RoveComm;
+rovecomm_packet packet;
+int16_t *position;
 
 void setup()
 {
@@ -84,7 +89,7 @@ void startupRoutine()
     delay(1000);
     for (int i = 0; i < 7; i++)
     {
-        servos[i].write(servoStart[i]);
+        servos[i].write(servoPosition[i]);
     }
 }
 
@@ -100,19 +105,19 @@ void gimbalIncrement(const int &servoNum1, const int &servoNum2)
 {
     int16_t *incrementValues = (int16_t *)packet.data;
 
-    for(int i = 0; i < 2; i++)
+    for(int i = 0; i < 2; i++) 
     {
-        if (abs(incrementValues[servoNum1]) > IGNORE_THRESHOLD)
+        if (abs(incrementValues[servoNum1]) > IGNORE_THRESHOLD) 
         {
-            servoPosition[] += incrementValues[servoNum1];
+            servoPosition[servoNum1] += incrementValues[servoNum1]; 
 
-            if (servoPosition[] > servoMax[])
+            if (servoPosition[servoNum1] > servoMax[servoNum1]) 
             {
-                servoPosition[] = servoMax[];
+                servoPosition[servoNum1] = servoMax[servoNum1];
             }
-            else if (servoPosition[] < servoMin[])
+            else if (servoPosition[servoNum1] < servoMin[servoNum1]) 
             {
-                servoPosition [] = servoMin[];
+                servoPosition [servoNum1] = servoMin[servoNum1];
             }
         }
     }
