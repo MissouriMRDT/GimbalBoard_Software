@@ -58,16 +58,21 @@ void loop()
     switch (packet.data_id)
     {
     case RC_GIMBALBOARD_LEFTDRIVEGIMBALINCREMENT_DATA_ID:
-        gimbalIncrement(4, 6);
+        gimbalIncrement(4, 0);
         break;
     case RC_GIMBALBOARD_RIGHTDRIVEGIMBALINCREMENT_DATA_ID:
-        gimbalIncrement(6, 8);
+        gimbalIncrement(1, 0);
         break;
     case RC_GIMBALBOARD_LEFTMAINGIMBALINCREMENT_DATA_ID:
-        gimbalIncrement(0, 2);
+        gimbalIncrement(5, 0);
+        gimbalIncrement(6, 0);
         break;
     case RC_GIMBALBOARD_RIGHTMAINGIMBALINCREMENT_DATA_ID:
-        gimbalIncrement(2, 4);
+        gimbalIncrement(2, 0);
+        gimbalIncrement(3, 0);
+        break;
+    case RC_GIMBALBOARD_INITIATETESTROUTINE_DATA_ID:
+        startupRoutine();
         break;
     default:
         break;
@@ -101,24 +106,20 @@ void dataOutput()
     }
 }
 
-void gimbalIncrement(const int &servoNum1, const int &servoNum2)
+void gimbalIncrement(const int &servoNum, const int num)
 {
     int16_t *incrementValues = (int16_t *)packet.data;
-
-    for(int i = 0; i < 2; i++) 
+    if (abs(incrementValues[servoNum]) > IGNORE_THRESHOLD) 
     {
-        if (abs(incrementValues[servoNum1]) > IGNORE_THRESHOLD) 
+        servoPosition[servoNum] += incrementValues[num]; 
+        if (servoPosition[servoNum] > servoMax[servoNum]) 
         {
-            servoPosition[servoNum1] += incrementValues[servoNum1]; 
-
-            if (servoPosition[servoNum1] > servoMax[servoNum1]) 
-            {
-                servoPosition[servoNum1] = servoMax[servoNum1];
-            }
-            else if (servoPosition[servoNum1] < servoMin[servoNum1]) 
-            {
-                servoPosition [servoNum1] = servoMin[servoNum1];
-            }
+            servoPosition[servoNum] = servoMax[servoNum];
+        }
+        else if (servoPosition[servoNum] < servoMin[servoNum]) 
+        {
+            servoPosition[servoNum] = servoMin[servoNum];
         }
     }
+    servos[servoNum].write((int)servoPosition[servoNum]);
 }    
