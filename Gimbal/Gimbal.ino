@@ -13,65 +13,63 @@ void setup()
     delay(ROVECOMM_DELAY);
 
     // attaches the servo array to the respective pins (1-8 servos are 0-7)
-    servos[0].attach(LMP_SERVO);
-    servos[1].attach(LMT_SERVO);
-    servos[2].attach(RMP_SERVO);
-    servos[3].attach(RMT_SERVO);
-    servos[4].attach(LD_SERVO);
-    servos[5].attach(SPARE1);
-    servos[6].attach(RD_SERVO);
-    servos[7].attach(SPARE2);
+    servos[RD_SERVO].attach(RD_SERVO_PIN);
+    servos[RMP_SERVO].attach(RMP_SERVO_PIN);
+    servos[RMT_SERVO].attach(RMT_SERVO_PIN);
+    servos[LD_SERVO].attach(LD_SERVO_PIN);
+    servos[LMP_SERVO].attach(LMP_SERVO_PIN);
+    servos[LMT_SERVO].attach(LMT_SERVO_PIN);
+    servos[SPARE1_SERVO].attach(SPARE1_SERVO);
 
     // servo positions are set to starting positions
-    servoPosition[0] = SERVO1_START;
-    servoPosition[1] = SERVO2_START;
-    servoPosition[2] = SERVO3_START;
-    servoPosition[3] = SERVO4_START;
-    servoPosition[4] = SERVO5_START;
-    servoPosition[5] = SERVO6_START;
-    servoPosition[6] = SERVO7_START;
-    servoPosition[7] = SERVO8_START;
+    servoPosition[RD_SERVO] = SERVO1_START;
+    servoPosition[RMP_SERVO] = SERVO2_START;
+    servoPosition[RMT_SERVO] = SERVO3_START;
+    servoPosition[LD_SERVO] = SERVO4_START;
+    servoPosition[LMP_SERVO] = SERVO5_START;
+    servoPosition[LMT_SERVO] = SERVO6_START;
+    servoPosition[SPARE1_SERVO] = SERVO7_START;
 
     // servo max values put in an array
-    servoMax[0] = LMP_SERVO_MAX;
-    servoMax[1] = LMT_SERVO_MAX;
-    servoMax[2] = RMP_SERVO_MAX;
-    servoMax[3] = RMT_SERVO_MAX;
-    servoMax[4] = LD_SERVO_MAX;
-    servoMax[5] = SPARE1_MAX;
-    servoMax[6] = RD_SERVO_MAX;
-    servoMax[7] = SPARE2_MAX;
+    servoMax[RD_SERVO] = RD_SERVO_MAX;
+    servoMax[RMP_SERVO] = RMP_SERVO_MAX;
+    servoMax[RMT_SERVO] = RMT_SERVO_MAX;
+    servoMax[LD_SERVO] = LD_SERVO_MAX;
+    servoMax[LMP_SERVO] = LMP_SERVO_MAX;
+    servoMax[LMT_SERVO] = LMT_SERVO_MAX;
+    servoMax[SPARE1_SERVO] = SPARE1_MAX;
 
     // servo min values put in an array
-    servoMin[0] = LMP_SERVO_MIN;
-    servoMin[1] = LMT_SERVO_MIN;
-    servoMin[2] = RMP_SERVO_MIN;
-    servoMin[3] = RMT_SERVO_MIN;
-    servoMin[4] = LD_SERVO_MIN;
-    servoMin[5] = SPARE1_MIN;
-    servoMin[6] = RD_SERVO_MIN;
-    servoMin[7] = SPARE2_MIN;
+    servoMin[RD_SERVO] = RD_SERVO_MIN;
+    servoMin[RMP_SERVO] = RMP_SERVO_MIN;
+    servoMin[RMT_SERVO] = RMT_SERVO_MIN;
+    servoMin[LD_SERVO] = LD_SERVO_MIN;
+    servoMin[LMP_SERVO] = LMP_SERVO_MIN;
+    servoMin[LMT_SERVO] = LMT_SERVO_MIN;
+    servoMin[SPARE1_SERVO] = SPARE1_MIN;
 
+    setPins();
     startupRoutine();
 }
 
 void loop()
 {
+    buttonCheck();
     packet = RoveComm.read();
 
     switch (packet.data_id)
     {
     case RC_GIMBALBOARD_LEFTDRIVEGIMBALINCREMENT_DATA_ID:
-        gimbalIncrement(4, 6);
+        gimbalIncrement(LD_SERVO, LD_SERVO+1);
         break;
     case RC_GIMBALBOARD_RIGHTDRIVEGIMBALINCREMENT_DATA_ID:
-        gimbalIncrement(6, 8);
+        gimbalIncrement(RD_SERVO, RD_SERVO+1);
         break;
     case RC_GIMBALBOARD_LEFTMAINGIMBALINCREMENT_DATA_ID:
-        gimbalIncrement(0, 2);
+        gimbalIncrement(LMP_SERVO, LMT_SERVO+1);
         break;
     case RC_GIMBALBOARD_RIGHTMAINGIMBALINCREMENT_DATA_ID:
-        gimbalIncrement(2, 4);
+        gimbalIncrement(RMP_SERVO, RMT_SERVO+1);
         break;
     default:
         break;
@@ -81,17 +79,17 @@ void loop()
 void startupRoutine()
 {
     delay(1000);
-    for (int i = 0; i < 8; i++)
+    for (int i = 0; i < NUM_SERVOS; i++)
     {
         servos[i].write(servoMin[i]);
     }
     delay(1000);
-    for (int i = 0; i < 8; i++)
+    for (int i = 0; i < NUM_SERVOS; i++)
     {
         servos[i].write(servoMax[i]);
     }
     delay(1000);
-    for (int i = 0; i < 8; i++)
+    for (int i = 0; i < NUM_SERVOS; i++)
     {
         servos[i].write(servoPosition[i]);
     }
@@ -126,5 +124,48 @@ void gimbalIncrement(const int &servoNum1, const int &servoNum2)
         }
 
         servos[i].write((int)servoPosition[i]);
+    }
+}
+
+void setPins()
+{
+    pinMode(RD_BUTTON, INPUT);
+    pinMode(RMP_BUTTON, INPUT);
+    pinMode(RMT_BUTTON, INPUT);
+    pinMode(LD_BUTTON, INPUT);
+    pinMode(LMP_BUTTON, INPUT);
+    pinMode(LMT_BUTTON, INPUT);
+    pinMode(SPARE1_BUTTON, INPUT);
+}
+
+void buttonCheck()
+{
+    if (digitalRead(RD_BUTTON))
+    {
+        gimbalIncrement(RD_SERVO, RD_SERVO+1);
+    }
+    if (digitalRead(RMP_SERVO))
+    {
+        gimbalIncrement(RMP_SERVO, RMP_SERVO+1);
+    }
+    if (digitalRead(RMT_SERVO))
+    {
+        gimbalIncrement(RMT_SERVO, RMT_SERVO+1);
+    }
+    if (digitalRead(LD_SERVO))
+    {
+        gimbalIncrement(LD_SERVO, LD_SERVO+1);
+    }
+    if (digitalRead(LMP_SERVO))
+    {
+        gimbalIncrement(LMP_SERVO, LMP_SERVO+1);
+    }
+    if (digitalRead(LMT_SERVO))
+    {
+        gimbalIncrement(LMT_SERVO, LMT_SERVO+1);
+    }
+    if (digitalRead(SPARE1_SERVO))
+    {
+        gimbalIncrement(SPARE1_SERVO, SPARE1_SERVO+1);
     }
 }
