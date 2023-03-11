@@ -5,12 +5,14 @@ RoveCommEthernet RoveComm;
 rovecomm_packet packet;
 int16_t *position;
 
+
+
 void setup()
 {
     Serial.begin(9600);
 
     RoveComm.begin(RC_GIMBALBOARD_FOURTHOCTET, &TCPServer, RC_ROVECOMM_GIMBALBOARD_MAC);
-    delay(ROVECOMM_DELAY);
+    Serial.println("Gimbal");
 
     // attaches the servo array to the respective pins (1-8 servos are 0-7)
     servos[RD_SERVO].attach(RD_SERVO_PIN);
@@ -48,33 +50,69 @@ void setup()
     servoMin[LMT_SERVO] = LMT_SERVO_MIN;
     servoMin[SPARE1_SERVO] = SPARE1_MIN;
 
-    setPins();
+    pinMode(RD_BUTTON, INPUT);
+    pinMode(RMP_BUTTON, INPUT);
+    pinMode(RMT_BUTTON, INPUT);
+    pinMode(LD_BUTTON, INPUT);
+    pinMode(LMP_BUTTON, INPUT);
+    pinMode(LMT_BUTTON, INPUT);
+    pinMode(SPARE1_BUTTON, INPUT);
+    
     startupRoutine();
 }
 
+
+
 void loop()
 {
-    buttonCheck();
-    packet = RoveComm.read();
+    checkButtons();
 
-    switch (packet.data_id)
-    {
-    case RC_GIMBALBOARD_LEFTDRIVEGIMBALINCREMENT_DATA_ID:
-        gimbalIncrement(LD_SERVO, LD_SERVO+1);
-        break;
-    case RC_GIMBALBOARD_RIGHTDRIVEGIMBALINCREMENT_DATA_ID:
-        gimbalIncrement(RD_SERVO, RD_SERVO+1);
-        break;
-    case RC_GIMBALBOARD_LEFTMAINGIMBALINCREMENT_DATA_ID:
-        gimbalIncrement(LMP_SERVO, LMT_SERVO+1);
-        break;
-    case RC_GIMBALBOARD_RIGHTMAINGIMBALINCREMENT_DATA_ID:
-        gimbalIncrement(RMP_SERVO, RMT_SERVO+1);
-        break;
-    default:
-        break;
+    // Parse RoveComm packets
+    packet = RoveComm.read();
+    switch (packet.data_id) {
+
+        // Increment left drive gimbal by [-180, 180]
+        case RC_GIMBALBOARD_LEFTDRIVEGIMBALINCREMENT_DATA_ID:
+        {
+            int16_t inc = ((int16_t*) packet.data)[0];
+            incrementGimbal(LD_SERVO, inc);
+            break;
+        }
+
+        // Increment right drive gimbal by [-180, 180]
+        case RC_GIMBALBOARD_RIGHTDRIVEGIMBALINCREMENT_DATA_ID:
+        {
+            int16_t inc = ((int16_t*) packet.data)[0];
+            incrementGimbal(RD_SERVO, inc);
+            break;
+        }
+
+        // Increment left pan and tilt gimbals by [-180, 180]
+        case RC_GIMBALBOARD_LEFTMAINGIMBALINCREMENT_DATA_ID:
+        {
+            int16_t* inc = (int16_t*) packet.data;
+            incrementGimbal(LMP_SERVO, inc[0]);
+            incrementGimbal(LMT_SERVO, inc[1]);
+            break;
+        }
+
+        // Increment right pan and tilt gimbals by [-180, 180]
+        case RC_GIMBALBOARD_RIGHTMAINGIMBALINCREMENT_DATA_ID:
+        {
+            int16_t* inc = (int16_t*) packet.data;
+            incrementGimbal(RMP_SERVO, inc[0]);
+            incrementGimbal(RMT_SERVO, inc[1]);
+            break;
+        }
+
+        //
+        default:
+            break;
     }
+    
 }
+
+
 
 void startupRoutine()
 {
@@ -95,77 +133,63 @@ void startupRoutine()
     }
 }
 
-void dataOutput()
+
+
+void incrementGimbal (const int &id, const int16_t &incrementVal)
 {
-    for (int i = 0; i < 2; i++)
-    {
-        Serial.println(packet.data[i]);
+    servoPosition[id] += incrementVal;
+    Serial.print("ServoPosition[id]:");
+    Serial.print(ServoPosition[id]);
+    Serial.print(" ");
+    if (servoPosition[id] > servoMax[id]) {
+        servoPosition[id] = servoMax[id];
     }
+    else if (servoPosition[id] < servoMin[id]) {
+        servoPosition[id] = servoMin[id];
+    }
+
+    Serial.print("new value:");
+    Serial.println(ServoPosition[id]);
+
+    servos[id].write(servoPosition[id]);
 }
 
-void gimbalIncrement(const int &servoNum1, const int &servoNum2)
+
+
+void checkButtons()
 {
-    int16_t *incrementValues = (int16_t *)packet.data;
-
-    for (int i = servoNum1; i < servoNum2; i++)
-    {
-        if (abs(incrementValues[i - servoNum1]) > IGNORE_THRESHOLD)
-        {
-            servoPosition[i] += incrementValues[i - servoNum1];
-
-            if (servoPosition[i] > servoMax[i])
-            {
-                servoPosition[i] = servoMax[i];
-            }
-            else if (servoPosition[i] < servoMin[i])
-            {
-                servoPosition[i] = servoMin[i];
-            }
-        }
-
-        servos[i].write((int)servoPosition[i]);
+    if (digitalRead(RD_BUTTON)) {
+        Serial.println("RD_BUTTON");
+        incrementGimbal(RD_SERVO, BUTTON_INC_VAL);
     }
-}
-
-void setPins()
-{
-    pinMode(RD_BUTTON, INPUT);
-    pinMode(RMP_BUTTON, INPUT);
-    pinMode(RMT_BUTTON, INPUT);
-    pinMode(LD_BUTTON, INPUT);
-    pinMode(LMP_BUTTON, INPUT);
-    pinMode(LMT_BUTTON, INPUT);
-    pinMode(SPARE1_BUTTON, INPUT);
-}
-
-void buttonCheck()
-{
-    if (digitalRead(RD_BUTTON))
-    {
-        gimbalIncrement(RD_SERVO, RD_SERVO+1);
+    
+    if (digitalRead(RMP_BUTTON)) {
+        Serial.println("RMP_BUTTON");
+        incrementGimbal(RMP_SERVO, BUTTON_INC_VAL);
     }
-    if (digitalRead(RMP_SERVO))
-    {
-        gimbalIncrement(RMP_SERVO, RMP_SERVO+1);
+    
+    if (digitalRead(RMT_BUTTON)) {
+        Serial.println("RMT_BUTTON");
+        incrementGimbal(RMT_SERVO, BUTTON_INC_VAL);
     }
-    if (digitalRead(RMT_SERVO))
-    {
-        gimbalIncrement(RMT_SERVO, RMT_SERVO+1);
+    
+    if (digitalRead(LD_BUTTON)) {
+        Serial.println("LD_BUTTON");
+        incrementGimbal(LD_SERVO, BUTTON_INC_VAL);
     }
-    if (digitalRead(LD_SERVO))
-    {
-        gimbalIncrement(LD_SERVO, LD_SERVO+1);
+    
+    if (digitalRead(LMP_BUTTON)) {
+        Serial.println("LMP_BUTTON");
+        incrementGimbal(LMP_SERVO, BUTTON_INC_VAL);
     }
-    if (digitalRead(LMP_SERVO))
-    {
-        gimbalIncrement(LMP_SERVO, LMP_SERVO+1);
+    
+    if (digitalRead(LMT_BUTTON)) {
+        Serial.println("LMT_BUTTON");
+        incrementGimbal(LMT_SERVO, BUTTON_INC_VAL);
     }
-    if (digitalRead(LMT_SERVO))
-    {
-        gimbalIncrement(LMT_SERVO, LMT_SERVO+1);
-    }
-    if (digitalRead(SPARE1_SERVO))
-    {
-        gimbalIncrement(SPARE1_SERVO, SPARE1_SERVO+1);
+    
+    if (digitalRead(SPARE1_BUTTON)) {
+        Serial.println("SPARE1_BUTTON");
+        incrementGimbal(SPARE1_SERVO, BUTTON_INC_VAL);
     }
 }

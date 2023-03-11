@@ -64,13 +64,8 @@ uint16_t servoMin[NUM_SERVOS];
 #define LMT_BUTTON      29
 #define SPARE1_BUTTON   30
 
-#define IGNORE_THRESHOLD 2
-#define ROVECOMM_DELAY 100
+#define BUTTON_INC_VAL  10
 
 void startupRoutine();
-void dataOutput();
-void gimbalIncrement(const int & servoNum1, const int & servoNum2);
-void setPins();
-void buttonCheck();
 
 #endif
