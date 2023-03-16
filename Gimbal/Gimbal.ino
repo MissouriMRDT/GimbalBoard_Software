@@ -137,9 +137,14 @@ void startupRoutine()
 
 void incrementGimbal (const int &id, const int16_t &incrementVal)
 {
-    servoPosition[id] += incrementVal;
+    if (digitalRead(RIGHT_SWITCH)) {
+        servoPosition[id] += incrementVal;
+    }
+    else if (digitalRead(LEFT_SWITCH)) {
+        servoPosition[id] -= incrementVal;
+    }
     Serial.print("ServoPosition[id]:");
-    Serial.print(ServoPosition[id]);
+    Serial.print(servoPosition[id]);
     Serial.print(" ");
     if (servoPosition[id] > servoMax[id]) {
         servoPosition[id] = servoMax[id];
@@ -149,7 +154,7 @@ void incrementGimbal (const int &id, const int16_t &incrementVal)
     }
 
     Serial.print("new value:");
-    Serial.println(ServoPosition[id]);
+    Serial.println(servoPosition[id]);
 
     servos[id].write(servoPosition[id]);
 }

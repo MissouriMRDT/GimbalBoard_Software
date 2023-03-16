@@ -16,13 +16,13 @@
 #define LMT_SERVO       5
 #define SPARE1_SERVO    6
 
-#define RD_SERVO_PIN 1
-#define RMP_SERVO_PIN 2
-#define RMT_SERVO_PIN 3
-#define LD_SERVO_PIN 4
-#define LMP_SERVO_PIN 5
-#define LMT_SERVO_PIN 6
-#define SPARE1_PIN 7
+#define RD_SERVO_PIN    1
+#define RMP_SERVO_PIN   2
+#define RMT_SERVO_PIN   3
+#define LD_SERVO_PIN    4
+#define LMP_SERVO_PIN   5
+#define LMT_SERVO_PIN   6
+#define SPARE1_PIN      33
 
 Servo servos[NUM_SERVOS];
 int16_t servoPosition[NUM_SERVOS];
@@ -40,22 +40,22 @@ uint16_t servoMin[NUM_SERVOS];
 #define SERVO8_START 135
 
 //Minimum and maximum servo values
-#define RD_SERVO_MIN 0
-#define RD_SERVO_MAX 180
-#define RMP_SERVO_MIN 0
-#define RMP_SERVO_MAX 180
-#define RMT_SERVO_MIN 0
-#define RMT_SERVO_MAX 180
-#define LD_SERVO_MIN 0
-#define LD_SERVO_MAX 180
-#define LMP_SERVO_MIN 0
-#define LMP_SERVO_MAX 180
-#define LMT_SERVO_MIN 0
-#define LMT_SERVO_MAX 180
-#define SPARE1_MIN 0
-#define SPARE1_MAX 180
+#define RD_SERVO_MIN    0
+#define RD_SERVO_MAX    180
+#define RMP_SERVO_MIN   0
+#define RMP_SERVO_MAX   180
+#define RMT_SERVO_MIN   0
+#define RMT_SERVO_MAX   180
+#define LD_SERVO_MIN    0
+#define LD_SERVO_MAX    180
+#define LMP_SERVO_MIN   0
+#define LMP_SERVO_MAX   180
+#define LMT_SERVO_MIN   0
+#define LMT_SERVO_MAX   180
+#define SPARE1_MIN      0
+#define SPARE1_MAX      180
 
-// buttons
+//Buttons
 #define RD_BUTTON       24
 #define RMP_BUTTON      25
 #define RMT_BUTTON      26
@@ -65,6 +65,10 @@ uint16_t servoMin[NUM_SERVOS];
 #define SPARE1_BUTTON   30
 
 #define BUTTON_INC_VAL  10
+
+//Switch
+#define RIGHT_SWITCH    11
+#define LEFT_SWITCH     12
 
 void startupRoutine();
 
