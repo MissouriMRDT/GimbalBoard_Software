@@ -1,17 +1,10 @@
 #include "Gimbal.h"
 
-EthernetServer TCPServer(RC_ROVECOMM_GIMBALBOARD_PORT);
-RoveCommEthernet RoveComm;
-rovecomm_packet packet;
-int16_t *position;
-
-
-
 void setup()
 {
     Serial.begin(9600);
 
-    RoveComm.begin(RC_GIMBALBOARD_FOURTHOCTET, &TCPServer, RC_ROVECOMM_GIMBALBOARD_MAC);
+    RoveComm.begin(RC_GIMBALBOARD_FIRSTOCTET, RC_GIMBALBOARD_SECONDOCTET, RC_GIMBALBOARD_THIRDOCTET, RC_GIMBALBOARD_FOURTHOCTET, &TCPServer);
     Serial.println("Gimbal");
 
     // attaches the servo array to the respective pins (1-8 servos are 0-7)

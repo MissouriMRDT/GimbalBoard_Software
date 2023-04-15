@@ -72,4 +72,9 @@ uint16_t servoMin[NUM_SERVOS];
 
 void startupRoutine();
 
+EthernetServer TCPServer(RC_ROVECOMM_ETHERNET_TCP_PORT);
+RoveCommEthernet RoveComm;
+rovecomm_packet packet;
+int16_t *position;
+
 #endif
